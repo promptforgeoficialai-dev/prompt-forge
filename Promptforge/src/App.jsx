@@ -5,7 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 // COMPONENTES UI
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-
+import { AuthProvider } from './context/AuthContext';
 // PÁGINAS
 import Home from './pages/home'; // Asegúrate que el archivo se llame home.jsx
 import Login from './pages/Login';
