@@ -1,6 +1,6 @@
 export default {
   plugins: {
-    '@tailwindcss/postcss': {}, // <--- ESTE ES EL CAMBIO QUE PIDE EL ERROR
+    '@tailwindcss/postcss': {},
     autoprefixer: {},
   },
 }
