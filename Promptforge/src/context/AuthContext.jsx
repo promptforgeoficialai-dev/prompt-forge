@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth, db, googleProvider } from '../firebase/config'; // Asegúrate de haber creado firebase/config.js también
+import { auth, db, googleProvider } from '../firebase/config';
 import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
+// ESTA LÍNEA ES VITAL. Si falta, el código falla:
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -12,23 +13,27 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        const userRef = doc(db, "users", firebaseUser.uid);
-        const userSnap = await getDoc(userRef);
+        try {
+          const userRef = doc(db, "users", firebaseUser.uid);
+          const userSnap = await getDoc(userRef);
 
-        if (!userSnap.exists()) {
-          const userData = {
-            uid: firebaseUser.uid,
-            name: firebaseUser.displayName,
-            email: firebaseUser.email,
-            photo: firebaseUser.photoURL,
-            isPremium: false,
-            role: 'user',
-            createdAt: serverTimestamp(),
-          };
-          await setDoc(userRef, userData);
-          setUser(userData);
-        } else {
-          setUser(userSnap.data());
+          if (!userSnap.exists()) {
+            const userData = {
+              uid: firebaseUser.uid,
+              name: firebaseUser.displayName,
+              email: firebaseUser.email,
+              photo: firebaseUser.photoURL,
+              isPremium: false,
+              role: 'user',
+              createdAt: serverTimestamp(),
+            };
+            await setDoc(userRef, userData);
+            setUser(userData);
+          } else {
+            setUser(userSnap.data());
+          }
+        } catch (error) {
+          console.error("Error en Firestore:", error);
         }
       } else {
         setUser(null);
@@ -48,4 +53,8 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth debe usarse dentro de un AuthProvider");
+  return context;
+};
