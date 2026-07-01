@@ -4,5 +4,6 @@
 
 body {
   margin: 0;
-  background-color: #020617;
+  background-color: #020617; /* Esto pondrá el fondo negro azulado */
+  color: white;
 }
