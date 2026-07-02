@@ -3,22 +3,60 @@
 @tailwind utilities;
 
 :root {
-  background-color: #020617;
+  --primary: #a855f7;
+  --secondary: #22d3ee;
+  --bg-dark: #020617;
+
+  background-color: var(--bg-dark);
   color-scheme: dark;
+}
+
+* {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
-  background-color: #020617;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-dark);
   color: white;
   overflow-x: hidden;
 }
 
-/* Animación sutil de fondo */
+/* Scrollbar Premium */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Glass */
+.glass-card {
+  @apply bg-slate-900/40 backdrop-blur-xl border border-white/10;
+}
+
+/* Animación de fondo */
 @keyframes pulse-slow {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
+  0%, 100% {
+    opacity: 0.3;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
 }
 
 .animate-glow {

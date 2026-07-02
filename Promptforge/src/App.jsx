@@ -1,74 +1,49 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
-// COMPONENTES UI
+// Componentes
 import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
-
-// PÁGINAS (Asegúrate de que los archivos existan en src/pages)
-import Home from './pages/home'; 
-import Login from './pages/Login';
+import Home from './pages/home';
 import Marketplace from './pages/Marketplace';
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import AdminPanel from './pages/AdminPanel';
 
-// COMPONENTE DE PROTECCIÓN
-const PrivateRoute = ({ children, adminOnly = false }) => {
-  const { user, loading } = useAuth();
-  if (loading) return (
-    <div className="h-screen bg-[#020617] flex items-center justify-center">
-      <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
-    </div>
-  );
-  if (!user) return <Navigate to="/login" />;
-  if (adminOnly && user?.role !== 'admin') return <Navigate to="/" />;
-  return children;
-};
-
-// FONDO DINÁMICO ESTILO VERCEL
-const GlobalBackground = () => (
-  <div className="fixed inset-0 -z-50 bg-[#020617] overflow-hidden">
-    <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-900/20 blur-[120px] rounded-full animate-pulse" />
-    <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-900/10 blur-[120px] rounded-full animate-pulse" />
-    <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-  </div>
-);
-
-function App() {
+const App = () => {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen text-slate-200 font-sans selection:bg-purple-500/30">
-          <GlobalBackground />
+        <div className="relative min-h-screen bg-[#020617]">
+          {/* Fondo de Luces Global (Fijo para toda la App) */}
+          <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+            <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/10 blur-[120px] rounded-full" />
+            <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/10 blur-[120px] rounded-full" />
+          </div>
+
           <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/market" element={<Marketplace />} />
-            
-            {/* RUTAS PRIVADAS */}
-            <Route path="/dashboard" element={
-              <PrivateRoute>
-                <div className="flex">
-                  <Sidebar />
-                  <Dashboard />
-                </div>
-              </PrivateRoute>
-            } />
+          
+          <AnimatePresence mode="wait">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/market" element={<Marketplace />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Routes>
+          </AnimatePresence>
 
-            <Route path="/admin" element={
-              <PrivateRoute adminOnly={true}>
-                <AdminPanel />
-              </PrivateRoute>
-            } />
-
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
+          {/* Botón de Feedback Flotante (SaaS Style) */}
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="fixed bottom-6 right-6 z-50 glass-card px-4 py-2 rounded-full text-xs font-bold text-slate-400 hover:text-white transition-colors"
+          >
+            ¿Necesitas ayuda?
+          </motion.button>
         </div>
       </Router>
     </AuthProvider>
   );
-}
+};
 
 export default App;
